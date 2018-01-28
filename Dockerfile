@@ -1,8 +1,12 @@
 FROM base/archlinux
 
-COPY build.sh /bin/build
+ARG W_DIR=/home/archiso/arch/x86_64
+
+VOLUME /root
 
 COPY archiso /home/archiso
+COPY build.sh /bin/build
+COPY chroot.sh "$W_DIR/chroot.sh"
 
 RUN cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup && \
     sed -i 's/^#Server/Server/' /etc/pacman.d/mirrorlist.backup && \
@@ -10,6 +14,6 @@ RUN cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup && \
     pacman -Syyu --noconfirm && \
     pacman -S --noconfirm squashfs-tools cdrtools syslinux
 
-WORKDIR /home/archiso/arch/x86_64
+WORKDIR "$W_DIR"
 
-CMD [ "bash" ]
+CMD [ "build" ]
